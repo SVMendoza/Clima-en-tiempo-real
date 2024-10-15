@@ -1,0 +1,300 @@
+---
+title: "Estación climática del CATIE"
+output:
+  flexdashboard::flex_dashboard:
+    logo: www/logo_redimen.png
+    orientation: rows 
+    vertical_layout: fill
+    #social: menu
+    source: embed
+    css: estiloPersonal.css
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(shiny)
+library(shinydashboard)
+library(data.table)
+library(ggplot2)
+library(plotly)
+library(leaflet)
+library(base64enc)
+```
+
+```{r}
+source('C:\\git_py\\AppsClima\\ModuloFunciones.R')
+datos<-get_weather_data()
+
+```
+
+## Row
+
+### Precipitación (Ultimo 15 min) {.value-box .small-box .custom-blue .value .icon}
+
+```{r}
+renderValueBox({
+           valueBox(
+             value = paste0("Avg: ", round(mean(datos$Lluvia, na.rm = TRUE), 1), "mm: ", round(min(datos$Lluvia, na.rm = TRUE), 1), "mm: ", round(max(datos$Lluvia, na.rm = TRUE), 1), "mm"),
+             #subtitle = "Precipitación",
+             icon = 'fa-tint'
+             #class = "custom-value-box"
+           )
+         })
+```
+
+### Temperatura (Ultimo 15 min) {.value-box .small-box .custom-orange .value .icon}
+
+```{r}
+renderValueBox({
+           valueBox(
+
+             value = paste0("Avg: ", round(mean(datos$Temp, na.rm = TRUE), 1), "°C\nMin: ", round(min(datos$Temp, na.rm = TRUE), 1), "°C\nMax: ", round(max(datos$Temp, na.rm = TRUE), 1), "°C"),
+            # subtitle = "Temperatura",
+             icon = "fa-thermometer-half"
+           )
+         })
+```
+
+### Viento (Ultimo 15 min) {.value-box .small-box .custom-green .value .icon}
+
+```{r}
+renderValueBox({
+           valueBox(
+             value = paste0("Avg: ", round(mean(datos$VientoPromEscalar, na.rm = TRUE), 1), " m/s\nMin: ", round(min(datos$VientoPromEscalar, na.rm = TRUE), 1), " m/s\nMax: ", round(max(datos$VientoPromEscalar, na.rm = TRUE), 1), " m/s"),
+           #  subtitle = "Velocidad del Viento",
+             icon = "fa-wind"
+           )
+         })
+```
+
+### Humedad relativa (Ultimo 15 min) {.value-box .small-box .custom-purple .value .icon}
+
+```{r}
+renderValueBox({
+           valueBox(
+             value = paste0("Avg: ", round(mean(datos$HR, na.rm = TRUE), 1), "%\nMin: ", round(min(datos$HR, na.rm = TRUE), 1), "%\nMax: ", round(max(datos$HR, na.rm = TRUE), 1), "%"),
+           #  subtitle = "Humedad Relativa",
+             icon = "fa-cloud-rain"
+           #icon= 'fa-water'
+           #fa-sun 
+           #fa-cloud
+           
+           )
+         })
+```
+
+## Row {.tabset .tabset-fade data-height="90%" data-width="100%"}
+
+### Temperatura
+
+```{r}
+  p <- ggplot(datos, aes(x = Fecha, y = Temp)) +
+  geom_line() +
+  xlab("Fecha") + 
+  ylab("Temperatura (°C)") +
+  scale_x_datetime(date_labels = "%Y-%m-%d %H:%M") +
+  theme_minimal()
+
+# Convertir a plotly
+p <- ggplotly(p)
+
+# Personalizar el eje X
+p <- p %>% layout(
+  xaxis = list(
+    type = "date",
+    tickformat = "%Y-%m-%d %H:%M",  # Formato completo en el eje X
+    showgrid = TRUE,  # Mostrar la cuadrícula
+    rangeslider = list(
+      visible = TRUE,
+      tickformat = "%Y",  # Mostrar solo el año en el rango deslizante
+       tickvals = unique(format(datos$Fecha, "%Y"))
+    )
+  )
+)
+
+# Mostrar el gráfico
+p
+```
+
+### Precipitación
+
+```{r}
+p <- ggplot(datos, aes(x = Fecha, y = Lluvia)) +
+      geom_line() +
+      xlab("Fecha") + 
+  ylab("Precipitación (mm)") +
+   scale_x_datetime(date_labels = "%Y-%m-%d %H:%M") +
+      theme_minimal()
+    p<- ggplotly(p)
+  p <- p %>% layout(
+  xaxis = list(
+    type = "date",
+    tickformat = "%Y-%m-%d %H:%M",  # Formato completo en el eje X
+    showgrid = TRUE,  # Mostrar la cuadrícula
+    rangeslider = list(
+      visible = TRUE,
+      tickformat = "%Y",  # Mostrar solo el año en el rango deslizante
+       tickvals = unique(format(datos$Fecha, "%Y"))
+    )
+  )
+)
+   p
+```
+
+### Viento
+
+```{r}
+p <- ggplot(datos, aes(x = Fecha, y = VientoPromEscalar)) +
+      geom_line() +
+      xlab("Fecha") + 
+  ylab("Velocidad del Viento (km/h)") +
+   scale_x_datetime(date_labels = "%Y-%m-%d %H:%M") +
+      theme_minimal()
+    p<- ggplotly(p)
+   p <- p %>% layout(
+  xaxis = list(
+    type = "date",
+    tickformat = "%Y-%m-%d %H:%M",  # Formato completo en el eje X
+    showgrid = TRUE,  # Mostrar la cuadrícula
+    rangeslider = list(
+      visible = TRUE,
+      tickformat = "%Y",  # Mostrar solo el año en el rango deslizante
+       tickvals = unique(format(datos$Fecha, "%Y"))
+    )
+  )
+)
+
+   p
+```
+
+### Humedad Relativa
+
+```{r}
+p <- ggplot(datos, aes(x = Fecha, y = HR)) +
+      geom_line() +
+      
+      xlab("Fecha") + 
+  ylab("Humedad Relativa (%)") +
+   scale_x_datetime(date_labels = "%Y-%m-%d %H:%M") +
+      theme_minimal()
+    p<- ggplotly(p)
+  p <- p %>% layout(
+  xaxis = list(
+    type = "date",
+    tickformat = "%Y-%m-%d %H:%M",  # Formato completo en el eje X
+    showgrid = TRUE,  # Mostrar la cuadrícula
+    rangeslider = list(
+      visible = TRUE,
+      tickformat = "%Y",  # Mostrar solo el año en el rango deslizante
+       tickvals = unique(format(datos$Fecha, "%Y"))
+    )
+  )
+)
+   p
+```
+
+### Mapa de ubicación de la estación
+
+```{r}
+
+f<-function() {
+CATIEimagen <- "C:\\git_py\\AppsClima\\www\\fotoCATIE.png"
+
+imgCATIE <- base64enc::dataURI(file = CATIEimagen, mime = "image/png")
+
+mapaVisual<-leaflet() %>% addTiles() %>% setView(-83.656, 9.884, zoom = 14)%>%
+ addPopups(-83.653211, 9.891283, '<b>Estación del CATIE</b>') 
+
+
+ mapaVisual%>% addMarkers(lng = -83.653211, lat = 9.8912838,
+             popup = paste("<div class='popup-imagen'><img src='", imgCATIE, "'></div>"))%>%
+addProviderTiles("Esri.WorldImagery", group = "Satélite") %>%
+  addProviderTiles("OpenTopoMap", group = "Relieve") %>%
+  addLayersControl(
+    baseGroups = c("OpenStreetMap", "Satélite", "Relieve"),
+    options = layersControlOptions(collapsed = TRUE)
+  )
+
+mapaVisual
+}
+
+
+f()
+```
+
+### Solicitar datos
+
+```{r}
+
+fluidPage(
+  fluidRow(
+    column(width = 6,
+           box(title = "Formulario de Solicitud de Datos", status = "primary", solidHeader = TRUE,
+               class = "scrollable-box full-height",  
+               textInput("full_name", "Nombre Completo:", ""),
+               textInput("institution", "Institución:", ""),
+               textInput("email", "Correo Electrónico:", ""),
+               selectInput("data_type", "Variable:",
+                           choices = c("Temperatura", "Velocidad del Viento", "Precipitación", 'Humedad Relativa')),
+               dateRangeInput("date_range", "Rango de Fechas:",
+                              start = Sys.Date() - 30, end = Sys.Date()),
+               actionButton("submit", "Enviar Solicitud"),
+               downloadButton("download_data", "Descargar Archivo"),
+               verbatimTextOutput("submission_result")
+)
+)#,
+#column(width = 6,
+      #    title = "Ubicación", status = "primary", solidHeader = TRUE,
+     #          leafletOutput("map") 
+          
+#)
+)
+)
+
+server <- function(input, output, session) {
+  
+  observeEvent(input$submit, {
+    form_data <- list(
+      "Nombre Completo" = input$full_name,
+      "Institución" = input$institution,
+      "Correo Electrónico" = input$email,
+      "Tipo de Datos" = input$data_type,
+      "Rango de Fechas" = paste(as.character(input$date_range[1]), "a", as.character(input$date_range[2]))
+    )
+    
+    output$submission_result <- renderPrint({
+      cat("Datos de la Solicitud:\n")
+      cat("Nombre Completo: ", form_data[["Nombre Completo"]], "\n")
+      cat("Institución: ", form_data[["Institución"]], "\n")
+      cat("Correo Electrónico: ", form_data[["Correo Electrónico"]], "\n")
+      cat("Variable: ", form_data[["Tipo de Datos"]], "\n")
+      cat("Rango de Fechas: ", form_data[["Rango de Fechas"]], "\n")
+    })
+  })
+  
+  output$download_data <- downloadHandler(
+    filename = function() {
+      paste("solicitud_datos_", Sys.Date(), ".csv", sep = "")
+    },
+    content = function(file) {
+      form_data <- data.frame(
+        "Nombre Completo" = input$full_name,
+        "Institución" = input$institution,
+        "Correo Electrónico" = input$email,
+        "Tipo de Datos" = input$data_type,
+        "Rango de Fechas" = paste(as.character(input$date_range[1]), "a", as.character(input$date_range[2]))
+      )
+      write.csv(form_data, file, row.names = FALSE)
+    }
+  )
+  
+#output$map <- renderLeaflet({
+#f()
+#  })
+}
+
+
+
+
+```
