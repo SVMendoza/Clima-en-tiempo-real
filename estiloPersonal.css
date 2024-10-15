@@ -1,0 +1,132 @@
+.navbar-brand{
+font-size: 28px;
+}
+
+.nav-tabs-custom > .nav-tabs > li > a {
+    padding: 10px 20px; 
+    background-color: #f0f0f0; 
+    color: #333; 
+    font-size: 14px; 
+    border: 1px solid #ccc; 
+    border-bottom: none; 
+    text-decoration: none; 
+    box-shadow: none; 
+    transition: background-color 0.3s;
+    border-color 0.3s; 
+}
+
+.nav-tabs-custom > .nav-tabs > li.active > a {
+    background-color: #000000 !important;
+    color: white !important;
+    font-size: 16px; 
+    font-weight: bold; 
+    border-top: 2px solid #000000; 
+    border-color: transparent; 
+}
+
+.nav-tabs-custom > .nav-tabs > li:not(.active) > a {
+    border-bottom-color: transparent; 
+}
+
+.nav-tabs-custom > .nav-tabs > li > a:hover {
+    background-color: #f0f0f0; 
+    color: #333; 
+}
+
+.navbar-logo.pull-left {
+  padding-top:8px;
+} 
+
+.container-fluid {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+.scrollable-box {
+    max-height: 400px;
+    overflow-y: auto;
+    height: 100%;
+}
+
+.value-box {
+    margin: 0;
+    padding: 10px; 
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between; 
+    width: 25%;
+    box-sizing: border-box;
+    min-height: 100px; 
+}
+
+.small-box {
+    font-size: 8px; 
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center; 
+    justify-content: space-between; 
+    min-height: 100px;
+    width: 100%;
+    border-radius: 0;
+    text-align: left;
+}
+
+.value-output {
+    font-size: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    }
+
+.icon {
+    font-size: 30px; 
+    margin-right: 10px;
+}
+
+.custom-orange {
+  background-color: #e67e22 !important; 
+  color: white !important;
+
+/* Estilo para el valueBox de Temperatura */
+.custom-blue {
+  background-color: #3498db !important; 
+  color: white !important; 
+}
+
+.custom-green {
+    background-color: #28a745; 
+    color: #fff; 
+}
+
+.custom-purple {
+    background-color: #6f42c1; 
+    color: #fff; 
+}
+
+/* Estilo para la foto en el mapa */
+.popup-imagen {
+    margin: 0;
+    padding: 0;
+}
+
+.popup-imagen img {
+    width: 600px;  
+    height: auto; 
+    display: block; 
+    margin: 0;
+    padding: 0;
+}
+
+.leaflet-popup-content-wrapper {
+    width: auto;  
+    height: auto; 
+    margin: 0;
+    padding: 0;
+
+    padding: 10px;
+    text-align: left;
+    border-radius: 18px;
+}
